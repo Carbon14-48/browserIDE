@@ -1,13 +1,23 @@
-import CodeEditor from "./Components/CodeEditor";
-import Navbar from "./Components/Navbar";
+import {
+  createBrowserRouter,
+  createRoutesFromElements,
+  Route,
+  RouterProvider,
+} from "react-router-dom";
+import FullPageRoute from "./Routes/FullPageRoute";
+import Index from "./pages/Index";
 function App() {
-  return (
-    <div>
-      hello world
-      <Navbar />
-      <CodeEditor language="javascript" defaultValue="......." height="300px" />
-    </div>
+  const router = createBrowserRouter(
+    createRoutesFromElements(
+      <>
+        <Route path="/" element={<FullPageRoute />}>
+          <Route index element={<Index />} />
+        </Route>
+      </>,
+    ),
   );
+
+  return <RouterProvider router={router}></RouterProvider>;
 }
 
 export default App;
