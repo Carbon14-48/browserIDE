@@ -1,5 +1,7 @@
 import FaultyTerminal from "../Components/FaultyTerminal";
+import FuzzyText from "../Components/FuzzyText";
 import Navbar from "../Components/Navbar";
+
 export default function Index() {
   return (
     <div className="relative w-screen h-screen overflow-hidden bg-black">
@@ -29,11 +31,10 @@ export default function Index() {
       <main className="absolute inset-0 z-20 flex flex-col items-center justify-center px-6 text-center pointer-events-none">
         <div className="pointer-events-auto">
           <div className="inline-block bg-black/40 backdrop-blur-md px-4 py-2 rounded-full text-sm text-white mb-8 border border-white/5"></div>
-          <h1 className="text-white font-extrabold leading-tight text-4xl sm:text-5xl md:text-6xl max-w-3xl mx-auto mb-6">
-            The Best Browser IDE On the market
-            <br />
-            {/* please check again */}
-          </h1>
+          <FuzzyText baseIntensity={0.1} hoverIntensity={0.9} fontSize="4rem">
+            The Best Browser IDE in the Market
+          </FuzzyText>
+          ;
           <div className="flex gap-4 justify-center mt-4">
             <button className="px-8 py-3 rounded-full bg-white text-black font-medium shadow-md pointer-events-auto hover:scale-110 cursor-pointer">
               Get Started
