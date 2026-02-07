@@ -1,8 +1,27 @@
+import { useState, useEffect } from "react";
 import FaultyTerminal from "../Components/FaultyTerminal";
 import FuzzyText from "../Components/FuzzyText";
 import Navbar from "../Components/Navbar";
 
 export default function Index() {
+  const [fontSize, setFontSize] = useState(144);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 640) {
+        setFontSize(20);
+      } else if (window.innerWidth < 1024) {
+        setFontSize(48);
+      } else {
+        setFontSize(60);
+      }
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
     <div className="relative w-screen h-screen overflow-hidden bg-black">
       <div className="absolute inset-0 z-10">
@@ -30,11 +49,15 @@ export default function Index() {
       <Navbar />
       <main className="absolute inset-0 z-20 flex flex-col items-center justify-center px-6 text-center pointer-events-none">
         <div className="pointer-events-auto">
-          <div className="inline-block bg-black/40 backdrop-blur-md px-4 py-2 rounded-full text-sm text-white mb-8 border border-white/5"></div>
-          <FuzzyText baseIntensity={0.1} hoverIntensity={0.9} fontSize="4rem">
-            The Best Browser IDE in the Market
-          </FuzzyText>
-          ;
+          <div className="inline-block bg-black/40 backdrop-blur-md px-4 py-2 rounded-full text-white mb-8 border border-white/5">
+            <FuzzyText
+              fontSize={fontSize}
+              baseIntensity={0.1}
+              hoverIntensity={0.9}
+            >
+              The Best Browser IDE in the Market
+            </FuzzyText>
+          </div>
           <div className="flex gap-4 justify-center mt-4">
             <button className="px-8 py-3 rounded-full bg-white text-black font-medium shadow-md pointer-events-auto hover:scale-110 cursor-pointer">
               Get Started
