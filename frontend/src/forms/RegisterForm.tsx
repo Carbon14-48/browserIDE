@@ -31,13 +31,13 @@ function LoginForm() {
           className="bg-cyan-500 hover:bg-cyan-400 cursor-pointer transition text-black font-semibold 
           py-2 rounded-full"
         >
-          Login
+          Register
         </button>
       </form>
 
       <div className="flex items-center gap-3 text-neutral-400 text-sm">
         <hr className="flex-1 border-neutral-700" />
-        <p>Or Register in with</p>
+        <p>Or Register with</p>
         <hr className="flex-1 border-neutral-700" />
       </div>
 
@@ -47,7 +47,7 @@ function LoginForm() {
           border border-neutral-700 rounded-full py-2 flex items-center justify-around"
         >
           <img className="w-5 h-5" src={googleIcon} />
-          <p className="mr-15">register with Google</p>
+          <p className="mr-12">Register with Google</p>
         </button>
 
         <button
@@ -55,7 +55,7 @@ function LoginForm() {
           border border-neutral-700 rounded-full py-2 flex justify-around items-center"
         >
           <img className="w-5 h-5" src={githubIcon} />
-          <p className="mr-15 ">register with GitHub</p>
+          <p className="mr-12 ">Register with GitHub</p>
         </button>
       </div>
 
