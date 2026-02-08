@@ -2,10 +2,10 @@ import { useState, useEffect } from "react";
 import FaultyTerminal from "../Components/FaultyTerminal";
 import FuzzyText from "../Components/FuzzyText";
 import Navbar from "../Components/Navbar";
-
+import { useNavigate } from "react-router-dom";
 export default function Index() {
   const [fontSize, setFontSize] = useState(144);
-
+  const navigate = useNavigate();
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 640) {
@@ -59,7 +59,10 @@ export default function Index() {
             </FuzzyText>
           </div>
           <div className="flex gap-4 justify-center mt-4">
-            <button className="px-8 py-3 rounded-full bg-white text-black font-medium shadow-md pointer-events-auto hover:scale-110 cursor-pointer">
+            <button
+              onClick={() => navigate("/login")}
+              className="px-8 py-3 rounded-full bg-white text-black font-medium shadow-md pointer-events-auto hover:scale-110 cursor-pointer"
+            >
               Get Started
             </button>
             <button className="px-8 py-3 rounded-full bg-black/60 text-white border border-white/10 pointer-events-auto glass hover:scale-110 cursor-pointer">

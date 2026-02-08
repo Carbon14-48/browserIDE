@@ -6,12 +6,16 @@ import {
 } from "react-router-dom";
 import FullPageRoute from "./Routes/FullPageRoute";
 import Index from "./pages/Index";
+import LoginForm from "./forms/LoginForm";
+import RegisterForm from "./forms/RegisterForm";
 function App() {
   const router = createBrowserRouter(
     createRoutesFromElements(
       <>
         <Route path="/" element={<FullPageRoute />}>
           <Route index element={<Index />} />
+          <Route path="login" element={<LoginForm />} />
+          <Route path="register" element={<RegisterForm />} />
         </Route>
       </>,
     ),
