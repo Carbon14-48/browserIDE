@@ -65,7 +65,7 @@ function LoginForm() {
 
         <button
           disabled={!isValid}
-          className="bg-cyan-500 disabled:opacity-40 hover:bg-cyan-400 transition 
+          className="bg-cyan-500 cursor-pointer disabled:opacity-40 hover:bg-cyan-400 transition 
             text-black font-semibold py-2 rounded-full"
         >
           Login
@@ -80,7 +80,7 @@ function LoginForm() {
 
       <div className="flex flex-col gap-3">
         <button
-          className="bg-neutral-800 hover:bg-neutral-700 transition 
+          className="bg-neutral-800 hover:bg-neutral-700 cursor-pointer transition 
           border border-neutral-700 rounded-full py-2 flex items-center justify-around"
         >
           <img className="w-5 h-5" src={googleIcon} />
@@ -88,7 +88,7 @@ function LoginForm() {
         </button>
 
         <button
-          className="bg-neutral-800 hover:bg-neutral-700 transition 
+          className="bg-neutral-800 hover:bg-neutral-700 transition cursor-pointer
           border border-neutral-700 rounded-full py-2 flex items-center justify-around"
         >
           <img className="w-5 h-5" src={githubIcon} />
@@ -104,7 +104,7 @@ function LoginForm() {
 
       <button
         onClick={() => navigate("/register")}
-        className="border border-cyan-500 text-cyan-400 hover:bg-cyan-500 
+        className="border border-cyan-500 text-cyan-400 hover:bg-cyan-500 cursor-pointer
           hover:text-black transition rounded-full py-2"
       >
         Register
