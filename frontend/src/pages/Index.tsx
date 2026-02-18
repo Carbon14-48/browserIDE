@@ -10,7 +10,6 @@ export default function Index() {
   const location = useLocation();
   const showOverlay =
     location.pathname === "/login" || location.pathname === "/register";
-
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 640) {

@@ -93,13 +93,11 @@ function RegisterForm() {
           Register
         </button>
       </form>
-
       <div className="flex items-center gap-3 text-neutral-400 text-sm">
         <hr className="flex-1 border-neutral-700" />
         <p>Or Register with</p>
         <hr className="flex-1 border-neutral-700" />
       </div>
-
       <div className="flex flex-col gap-3">
         <button
           className="bg-neutral-800 cursor-pointer hover:bg-neutral-700 transition 
@@ -117,13 +115,11 @@ function RegisterForm() {
           <p className="mr-12 ">Register with GitHub</p>
         </button>
       </div>
-
       <div className="flex items-center gap-3 text-neutral-400 text-sm">
         <hr className="flex-1 border-neutral-700" />
         <p>You have an account?</p>
         <hr className="flex-1 border-neutral-700" />
       </div>
-
       <button
         onClick={() => navigate("/login")}
         className="border cursor-pointer  border-cyan-500 text-cyan-400 hover:bg-cyan-500 
