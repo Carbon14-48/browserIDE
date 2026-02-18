@@ -13,7 +13,8 @@ function App() {
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path="/" element={<FullPageRoute />}>
-        <Route path="" element={<Index />}>
+        <Route element={<Index />}>
+          <Route index element={null} />
           <Route path="login" element={<LoginForm />} />
           <Route path="register" element={<RegisterForm />} />
         </Route>

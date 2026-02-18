@@ -7,7 +7,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 const schema = z
   .object({
-    email: z.string().email("Please enter a valid email"),
+    username: z
+      .string()
+      .min(4, "Username too short")
+      .max(12, "Username too long"),
+    email: z.email("Please enter a valid email"),
     password: z
       .string()
       .min(4, "Password too short")
@@ -46,6 +50,17 @@ function RegisterForm() {
       flex flex-col gap-6 rounded-2xl p-6 text-white shadow-xl"
     >
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+        <label className="text-sm text-neutral-300">Username</label>
+        <input
+          {...register("username")}
+          type="text"
+          className="bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2 
+              focus:outline-none focus:ring-2 focus:ring-cyan-400"
+        />
+        {errors.username && (
+          <p className="text-red-400 text-xs">{errors.username.message}</p>
+        )}
+
         <div className="flex flex-col gap-1">
           <label className="text-sm text-neutral-300">Email</label>
           <input
