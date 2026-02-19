@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString(exclude = "user") // Prevent circular reference
+@ToString(exclude = "user")
 @EqualsAndHashCode(of = "id")
 public class UserLocalAuth {
 
