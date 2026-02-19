@@ -1,4 +1,4 @@
-package com.Glitch.browserIDE.models;
+package com.Glitch.browserIDE.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;

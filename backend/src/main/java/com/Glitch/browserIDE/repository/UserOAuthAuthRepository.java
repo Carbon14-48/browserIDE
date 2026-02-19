@@ -6,8 +6,8 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.Glitch.browserIDE.models.UserOAuthAuth;
-import com.Glitch.browserIDE.models.AuthProvider;
+import com.Glitch.browserIDE.model.AuthProvider;
+import com.Glitch.browserIDE.model.UserOAuthAuth;
 
 @Repository
 public interface UserOAuthAuthRepository extends JpaRepository<UserOAuthAuth, Long> {

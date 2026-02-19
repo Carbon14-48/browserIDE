@@ -1,9 +1,6 @@
-package com.Glitch.browserIDE.models;
+package com.Glitch.browserIDE.model;
 
 public enum AuthProvider {
     GITHUB,
-
     GOOGLE,
-
-    FACEBOOK
 }
