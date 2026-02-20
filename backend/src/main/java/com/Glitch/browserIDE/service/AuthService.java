@@ -4,6 +4,7 @@ import com.Glitch.browserIDE.dto.request.LoginRequest;
 import com.Glitch.browserIDE.dto.request.RegisterRequest;
 import com.Glitch.browserIDE.dto.response.AuthResponse;
 import com.Glitch.browserIDE.dto.response.UserDTO;
+import com.Glitch.browserIDE.model.RefreshToken;
 import com.Glitch.browserIDE.model.User;
 import com.Glitch.browserIDE.model.UserLocalAuth;
 import com.Glitch.browserIDE.repository.UserLocalAuthRepository;
@@ -22,9 +23,10 @@ public class AuthService {
     private final UserLocalAuthRepository userLocalAuthRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final RefreshTokenService refreshTokenService;
 
     @Transactional
-    public AuthResponse register(RegisterRequest request) {
+    public AuthResponseWithRefreshToken register(RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new IllegalArgumentException("Email already registered");
         }
@@ -52,16 +54,20 @@ public class AuthService {
 
         userLocalAuthRepository.save(localAuth);
 
-        String token = jwtService.generateToken(savedUser.getId(), savedUser.getEmail());
+        // Generate tokens
+        String accessToken = jwtService.generateAccessToken(savedUser.getId(), savedUser.getEmail());
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(savedUser);
 
-        return AuthResponse.builder()
-                .token(token)
-                .user(UserDTO.from(savedUser))
-                .build();
+        return new AuthResponseWithRefreshToken(
+                AuthResponse.builder()
+                        .accessToken(accessToken)
+                        .user(UserDTO.from(savedUser))
+                        .build(),
+                refreshToken.getToken());
     }
 
     @Transactional(readOnly = true)
-    public AuthResponse login(LoginRequest request) {
+    public AuthResponseWithRefreshToken login(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new BadCredentialsException("Invalid email or password"));
 
@@ -76,11 +82,38 @@ public class AuthService {
             throw new BadCredentialsException("Account is disabled");
         }
 
-        String token = jwtService.generateToken(user.getId(), user.getEmail());
+        // Generate tokens
+        String accessToken = jwtService.generateAccessToken(user.getId(), user.getEmail());
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(user);
 
-        return AuthResponse.builder()
-                .token(token)
-                .user(UserDTO.from(user))
-                .build();
+        return new AuthResponseWithRefreshToken(
+                AuthResponse.builder()
+                        .accessToken(accessToken)
+                        .user(UserDTO.from(user))
+                        .build(),
+                refreshToken.getToken());
+    }
+
+    @Transactional
+    public String refreshAccessToken(String refreshTokenString) {
+        RefreshToken refreshToken = refreshTokenService.validateRefreshToken(refreshTokenString);
+        User user = refreshToken.getUser();
+
+        return jwtService.generateAccessToken(user.getId(), user.getEmail());
+    }
+
+    @Transactional
+    public void logout(Long userId) {
+        refreshTokenService.revokeUserTokens(userId);
+    }
+
+    public static class AuthResponseWithRefreshToken {
+        public final AuthResponse authResponse;
+        public final String refreshToken;
+
+        public AuthResponseWithRefreshToken(AuthResponse authResponse, String refreshToken) {
+            this.authResponse = authResponse;
+            this.refreshToken = refreshToken;
+        }
     }
 }
