@@ -23,6 +23,9 @@ public class JwtService {
     @Value("${jwt.expiration}")
     private long jwtExpiration;
 
+    @Value("${jwt.refresh.expiration}")
+    private long refreshExpiration;
+
     private SecretKey getSigningKey() {
         byte[] keyBytes = secretKey.getBytes(StandardCharsets.UTF_8);
         return Keys.hmacShaKeyFor(keyBytes);
@@ -36,7 +39,7 @@ public class JwtService {
                 .getPayload();
     }
 
-    private <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
@@ -50,10 +53,6 @@ public class JwtService {
         return extractClaim(token, claims -> claims.get("email", String.class));
     }
 
-    public String extractUsername(String token) {
-        return extractEmail(token);
-    }
-
     private Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }
@@ -62,9 +61,10 @@ public class JwtService {
         return extractExpiration(token).before(new Date());
     }
 
-    public String generateToken(Long userId, String email) {
+    public String generateAccessToken(Long userId, String email) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("email", email);
+        claims.put("type", "access");
 
         long currentTimeMillis = System.currentTimeMillis();
 
@@ -77,35 +77,29 @@ public class JwtService {
                 .compact();
     }
 
-    // public String generateToken(UserDetails userDetails) {
-    // return generateToken(new HashMap<>(), userDetails);
-    // }
+    public String generateRefreshToken(Long userId) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("type", "refresh");
 
-    // public String generateToken(Map<String, Object> extraClaims, UserDetails
-    // userDetails) {
-    // long currentTimeMillis = System.currentTimeMillis();
+        long currentTimeMillis = System.currentTimeMillis();
 
-    // return Jwts.builder()
-    // .claims(extraClaims)
-    // .subject(userDetails.getUsername())
-    // .issuedAt(new Date(currentTimeMillis))
-    // .expiration(new Date(currentTimeMillis + jwtExpiration))
-    // .signWith(getSigningKey())
-    // .compact();
-    // }
+        return Jwts.builder()
+                .claims(claims)
+                .subject(userId.toString())
+                .issuedAt(new Date(currentTimeMillis))
+                .expiration(new Date(currentTimeMillis + refreshExpiration))
+                .signWith(getSigningKey())
+                .compact();
+    }
 
+    //// Acces Token
     public boolean isTokenValid(String token, Long userId) {
         final Long tokenUserId = extractUserId(token);
         return tokenUserId.equals(userId) && !isTokenExpired(token);
     }
 
-    // public boolean isTokenValid(String token, String email) {
-    // final String tokenEmail = extractEmail(token);
-    // return tokenEmail.equals(email) && !isTokenExpired(token);
-    // }
-
-    // public boolean isTokenValid(String token, UserDetails userDetails) {
-    // final String username = extractUsername(token);
-    // return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
-    // }
+    /// Refresh Token
+    public Date getRefreshTokenExpiration() {
+        return new Date(System.currentTimeMillis() + refreshExpiration);
+    }
 }
