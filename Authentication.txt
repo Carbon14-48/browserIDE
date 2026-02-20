@@ -1,0 +1,30 @@
+─────────────────────────────────────────────────────────────
+ LOGIN                                                        
+─────────────────────────────────────────────────────────────
+ 1. User sends email + password                              
+ 2. Server validates credentials                             
+ 3. Server generates:                                        
+    - Access Token (15 min) → sent in response body         
+    - Refresh Token (7 days) → sent in HttpOnly cookie     
+ 4. Frontend stores Access Token in memory (React state)    
+ 5. Browser stores Refresh Token automatically (cookie)     
+
+
+─────────────────────────────────────────────────────────────
+ MAKING REQUESTS                                              
+─────────────────────────────────────────────────────────────
+ 1. Frontend sends Access Token in Authorization header     
+ 2. Server validates Access Token                           
+ 3. If valid → process request                              
+ 4. If expired → return 401                                 
+
+─────────────────────────────────────────────────────────────
+ TOKEN REFRESH (When Access Token Expires)  
+─────────────────────────────────────────────────────────────
+ 1. Request fails with 401 (Access Token expired)           
+ 2. Frontend automatically calls /api/auth/refresh           
+ 3. Refresh Token sent automatically (HttpOnly cookie)      
+ 4. Server validates Refresh Token                          
+ 5. Server generates new Access Token                       
+ 6. Frontend stores new Access Token in memory             
+ 7. Retry original request with new Access Token            
