@@ -43,7 +43,7 @@ public class JwtService {
     }
 
     public String extractUsername(String token) {
-        return extractClaim(token, Claims::getSubject);
+        return extractClaim(token, claims -> claims.getSubject());
     }
 
     private Date extractExpiration(String token) {
@@ -77,6 +77,7 @@ public class JwtService {
     public String generateTokenWithUserId(String username, Long userId) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("userId", userId);
+
         long currentTimeMillis = System.currentTimeMillis();
         return Jwts.builder()
                 .claims(claims)
