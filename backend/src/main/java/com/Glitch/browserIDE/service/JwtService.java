@@ -3,7 +3,6 @@ package com.Glitch.browserIDE.service;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
@@ -37,64 +36,76 @@ public class JwtService {
                 .getPayload();
     }
 
-    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+    private <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
 
+    public Long extractUserId(String token) {
+        String subject = extractClaim(token, Claims::getSubject);
+        return Long.parseLong(subject);
+    }
+
+    public String extractEmail(String token) {
+        return extractClaim(token, claims -> claims.get("email", String.class));
+    }
+
     public String extractUsername(String token) {
-        return extractClaim(token, claims -> claims.getSubject());
+        return extractEmail(token);
     }
 
     private Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }
 
-    public Long extractUserId(String token) {
-        return extractClaim(token, claims -> claims.get("userId", Long.class));
-    }
-
     private boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
 
-    public String generateToken(UserDetails userDetails) {
-        return generateToken(new HashMap<>(), userDetails);
-    }
-
-    public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
-        long currentTimeMillis = System.currentTimeMillis();
-
-        return Jwts.builder()
-                .claims(extraClaims)
-                .subject(userDetails.getUsername())
-                .issuedAt(new Date(currentTimeMillis))
-                .expiration(new Date(currentTimeMillis + jwtExpiration))
-                .signWith(getSigningKey())
-                .compact();
-    }
-
-    public String generateTokenWithUserId(String username, Long userId) {
+    public String generateToken(Long userId, String email) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("userId", userId);
+        claims.put("email", email);
 
         long currentTimeMillis = System.currentTimeMillis();
+
         return Jwts.builder()
                 .claims(claims)
-                .subject(username)
+                .subject(userId.toString())
                 .issuedAt(new Date(currentTimeMillis))
                 .expiration(new Date(currentTimeMillis + jwtExpiration))
                 .signWith(getSigningKey())
                 .compact();
     }
 
-    public boolean isTokenValid(String token, UserDetails userDetails) {
-        final String username = extractUsername(token);
-        return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
+    // public String generateToken(UserDetails userDetails) {
+    // return generateToken(new HashMap<>(), userDetails);
+    // }
+
+    // public String generateToken(Map<String, Object> extraClaims, UserDetails
+    // userDetails) {
+    // long currentTimeMillis = System.currentTimeMillis();
+
+    // return Jwts.builder()
+    // .claims(extraClaims)
+    // .subject(userDetails.getUsername())
+    // .issuedAt(new Date(currentTimeMillis))
+    // .expiration(new Date(currentTimeMillis + jwtExpiration))
+    // .signWith(getSigningKey())
+    // .compact();
+    // }
+
+    public boolean isTokenValid(String token, Long userId) {
+        final Long tokenUserId = extractUserId(token);
+        return tokenUserId.equals(userId) && !isTokenExpired(token);
     }
 
-    public boolean isTokenValid(String token, String username) {
-        final String tokenUsername = extractUsername(token);
-        return tokenUsername.equals(username) && !isTokenExpired(token);
-    }
+    // public boolean isTokenValid(String token, String email) {
+    // final String tokenEmail = extractEmail(token);
+    // return tokenEmail.equals(email) && !isTokenExpired(token);
+    // }
+
+    // public boolean isTokenValid(String token, UserDetails userDetails) {
+    // final String username = extractUsername(token);
+    // return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
+    // }
 }
