@@ -8,6 +8,7 @@ import FullPageRoute from "./Routes/FullPageRoute";
 import Index from "./pages/Index";
 import LoginForm from "./forms/LoginForm";
 import RegisterForm from "./forms/RegisterForm";
+import CodeEditor from "./Components/CodeEditor";
 
 function App() {
   const router = createBrowserRouter(
@@ -18,6 +19,7 @@ function App() {
           <Route path="login" element={<LoginForm />} />
           <Route path="register" element={<RegisterForm />} />
         </Route>
+        <Route path="editor" element={<CodeEditor />} />
       </Route>,
     ),
   );

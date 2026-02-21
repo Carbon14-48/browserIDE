@@ -1,22 +1,27 @@
-import googleIcon from "../assets/google.svg";
-import githubIcon from "../assets/github.svg";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useAuth } from "../context/AuthContext";
+import googleIcon from "../assets/google.svg";
+import githubIcon from "../assets/github.svg";
 
 const schema = z.object({
-  email: z.email("Please enter a valid email"),
+  email: z.string().email("Please enter a valid email"),
   password: z
     .string()
     .min(4, "Password too short")
-    .max(12, "Password too long"),
+    .max(50, "Password too long"),
 });
 
 type LoginFormData = z.infer<typeof schema>;
 
 function LoginForm() {
   const navigate = useNavigate();
+  const { login } = useAuth();
+  const [error, setError] = useState<string>("");
+  const [loading, setLoading] = useState(false);
 
   const {
     register,
@@ -27,8 +32,19 @@ function LoginForm() {
     mode: "onChange",
   });
 
-  const onSubmit = (data: LoginFormData) => {
-    console.log("Login data:", data);
+  const onSubmit = async (data: LoginFormData) => {
+    setLoading(true);
+    setError("");
+
+    try {
+      await login(data.email, data.password);
+      navigate("/editor");
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+      setError(err.response?.data || "Login failed");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -36,6 +52,12 @@ function LoginForm() {
       className="w-90 bg-neutral-900/80 backdrop-blur-xl border border-white/10 
       flex flex-col gap-6 rounded-2xl p-6 text-white shadow-xl"
     >
+      {error && (
+        <div className="bg-red-500/20 border border-red-500 text-red-400 px-4 py-2 rounded-lg">
+          {error}
+        </div>
+      )}
+
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
         <div className="flex flex-col gap-1">
           <label className="text-sm text-neutral-300">Email</label>
@@ -64,11 +86,11 @@ function LoginForm() {
         </div>
 
         <button
-          disabled={!isValid}
+          disabled={!isValid || loading}
           className="bg-cyan-500 cursor-pointer disabled:opacity-40 hover:bg-cyan-400 transition 
             text-black font-semibold py-2 rounded-full"
         >
-          Login
+          {loading ? "Logging in..." : "Login"}
         </button>
       </form>
 

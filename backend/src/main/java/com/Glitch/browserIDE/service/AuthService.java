@@ -66,7 +66,7 @@ public class AuthService {
                 refreshToken.getToken());
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public AuthResponseWithRefreshToken login(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new BadCredentialsException("Invalid email or password"));
