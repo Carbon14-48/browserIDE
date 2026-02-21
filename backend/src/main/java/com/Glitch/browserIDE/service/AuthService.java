@@ -3,6 +3,7 @@ package com.Glitch.browserIDE.service;
 import com.Glitch.browserIDE.dto.request.LoginRequest;
 import com.Glitch.browserIDE.dto.request.RegisterRequest;
 import com.Glitch.browserIDE.dto.response.AuthResponse;
+import com.Glitch.browserIDE.dto.response.AuthResponseWithRefreshToken;
 import com.Glitch.browserIDE.dto.response.UserDTO;
 import com.Glitch.browserIDE.model.RefreshToken;
 import com.Glitch.browserIDE.model.User;
@@ -107,13 +108,4 @@ public class AuthService {
         refreshTokenService.revokeUserTokens(userId);
     }
 
-    public static class AuthResponseWithRefreshToken {
-        public final AuthResponse authResponse;
-        public final String refreshToken;
-
-        public AuthResponseWithRefreshToken(AuthResponse authResponse, String refreshToken) {
-            this.authResponse = authResponse;
-            this.refreshToken = refreshToken;
-        }
-    }
 }

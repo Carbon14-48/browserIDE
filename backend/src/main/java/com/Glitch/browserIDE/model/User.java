@@ -19,7 +19,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString(exclude = { "localAuth", "oauthAuths" })
+@ToString(exclude = { "localAuth", "oauthAuths" }) // to avoid circular dependency
 @EqualsAndHashCode(of = "id")
 public class User {
 

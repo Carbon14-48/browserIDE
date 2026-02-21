@@ -3,6 +3,7 @@ package com.Glitch.browserIDE.controller;
 import com.Glitch.browserIDE.dto.request.LoginRequest;
 import com.Glitch.browserIDE.dto.request.RegisterRequest;
 import com.Glitch.browserIDE.dto.response.AuthResponse;
+import com.Glitch.browserIDE.dto.response.AuthResponseWithRefreshToken;
 import com.Glitch.browserIDE.service.AuthService;
 import com.Glitch.browserIDE.service.JwtService;
 import jakarta.servlet.http.Cookie;
@@ -32,7 +33,7 @@ public class AuthController {
     public ResponseEntity<AuthResponse> register(
             @Valid @RequestBody RegisterRequest request,
             HttpServletResponse response) {
-        AuthService.AuthResponseWithRefreshToken result = authService.register(request);
+        AuthResponseWithRefreshToken result = authService.register(request);
 
         setRefreshTokenCookie(response, result.refreshToken);
 
@@ -45,7 +46,7 @@ public class AuthController {
     public ResponseEntity<AuthResponse> login(
             @Valid @RequestBody LoginRequest request,
             HttpServletResponse response) {
-        AuthService.AuthResponseWithRefreshToken result = authService.login(request);
+        AuthResponseWithRefreshToken result = authService.login(request);
 
         // Set refresh token as HttpOnly cookie
         setRefreshTokenCookie(response, result.refreshToken);
