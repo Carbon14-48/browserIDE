@@ -1,6 +1,12 @@
-import { createContext, useContext, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  type ReactNode,
+} from "react";
 import { authService } from "../services/AuthService";
-import { setAccessToken } from "../services/api";
+import api, { setAccessToken } from "../services/api";
 
 interface User {
   id: number;
@@ -14,6 +20,7 @@ interface User {
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
+  isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
   register: (
     username: string,
@@ -28,12 +35,33 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const restoreSession = async () => {
+      try {
+        // Try to refresh access token
+        const refreshResponse = await api.post("/auth/refresh");
+        setAccessToken(refreshResponse.data.accessToken);
+
+        // Get current user info
+        const userResponse = await api.get("/auth/me");
+        setUser(userResponse.data);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      } catch (error) {
+        // No valid session - user stays null
+        console.log("No session to restore");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    restoreSession();
+  }, []);
 
   const login = async (email: string, password: string) => {
     const response = await authService.login({ email, password });
     setUser(response.user);
-    // Access token stored in memory via api.ts
-    // Refresh token stored in HttpOnly cookie automatically
   };
 
   const register = async (
@@ -49,8 +77,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       fullName,
     });
     setUser(response.user);
-    // Access token stored in memory via api.ts
-    // Refresh token stored in HttpOnly cookie automatically
   };
 
   const logout = async () => {
@@ -64,12 +90,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       value={{
         user,
         isAuthenticated: !!user,
+        isLoading,
         login,
         register,
         logout,
       }}
     >
-      {children}
+      {isLoading ? (
+        <div className="min-h-screen bg-neutral-950 flex items-center justify-center">
+          <div className="text-white text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-500 mx-auto mb-4"></div>
+            <p>Loading...</p>
+          </div>
+        </div>
+      ) : (
+        children
+      )}
     </AuthContext.Provider>
   );
 };
