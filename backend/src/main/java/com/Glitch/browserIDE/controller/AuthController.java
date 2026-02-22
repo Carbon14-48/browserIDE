@@ -4,6 +4,9 @@ import com.Glitch.browserIDE.dto.request.LoginRequest;
 import com.Glitch.browserIDE.dto.request.RegisterRequest;
 import com.Glitch.browserIDE.dto.response.AuthResponse;
 import com.Glitch.browserIDE.dto.response.AuthResponseWithRefreshToken;
+import com.Glitch.browserIDE.dto.response.UserDTO;
+import com.Glitch.browserIDE.model.User;
+import com.Glitch.browserIDE.repository.UserRepository;
 import com.Glitch.browserIDE.service.AuthService;
 import com.Glitch.browserIDE.service.JwtService;
 import jakarta.servlet.http.Cookie;
@@ -24,8 +27,8 @@ public class AuthController {
 
     private final AuthService authService;
     private final JwtService jwtService;
+    private final UserRepository userRepository;
 
-    // Cookie settings
     private static final String REFRESH_TOKEN_COOKIE_NAME = "refreshToken";
     private static final int REFRESH_TOKEN_COOKIE_MAX_AGE = 7 * 24 * 60 * 60; // 7 days in seconds
 
@@ -91,6 +94,25 @@ public class AuthController {
         clearRefreshTokenCookie(response);
 
         return ResponseEntity.ok("Logged out successfully");
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<?> getCurrentUser(HttpServletRequest request) {
+        String refreshToken = extractRefreshTokenFromCookie(request);
+
+        if (refreshToken == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not authenticated");
+        }
+
+        try {
+            Long userId = jwtService.extractUserId(refreshToken);
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+            return ResponseEntity.ok(UserDTO.from(user));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
+        }
     }
 
     private void setRefreshTokenCookie(HttpServletResponse response, String refreshToken) {

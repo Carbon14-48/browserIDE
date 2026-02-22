@@ -74,4 +74,8 @@ public class TestController {
         return ResponseEntity.ok("All test data deleted!");
     }
 
+    @GetMapping("/protected")
+    public ResponseEntity<String> protectedEndpoint() {
+        return ResponseEntity.ok("Protected endpoint accessed successfully!");
+    }
 }

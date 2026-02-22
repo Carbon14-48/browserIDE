@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AuthResponseWithRefreshToken {
-    private AuthResponse authResponse;
-    private String refreshToken;
+    public AuthResponse authResponse;
+    public String refreshToken;
 }
