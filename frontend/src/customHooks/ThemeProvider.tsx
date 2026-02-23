@@ -14,8 +14,8 @@ interface themeContextType {
 interface ThemeProviderProps {
   children: ReactNode;
 }
-const themeContext = createContext<themeContextType | undefined>(undefined);
 
+const themeContext = createContext<themeContextType | undefined>(undefined);
 export function ThemeProvider({ children }: ThemeProviderProps) {
   const [theme, setTheme] = useState<Theme>(() => {
     const saved = localStorage.getItem("theme") as Theme | null;

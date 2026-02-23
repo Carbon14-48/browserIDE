@@ -31,14 +31,13 @@ const CodeEditor: React.FC<MonacoEditorProps> = ({
     }
   };
 
-  // Add this function
   const testProtectedEndpoint = async () => {
     try {
       const response = await api.get("/test/protected");
       setTestMessage(`${response.data}`);
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
-      setTestMessage("❌ Failed to access endpoint");
+      setTestMessage("Failed to access endpoint");
     }
   };
 
