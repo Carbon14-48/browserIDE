@@ -1,6 +1,7 @@
 package com.Glitch.browserIDE.service;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -32,11 +33,8 @@ public class JwtService {
     }
 
     private Claims extractAllClaims(String token) {
-        return Jwts.parser()
-                .verifyWith(getSigningKey())
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
+        JwtParser parser = Jwts.parser().verifyWith(getSigningKey()).build();
+        return parser.parseSignedClaims(token).getPayload();
     }
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
@@ -98,7 +96,6 @@ public class JwtService {
         return tokenUserId.equals(userId) && !isTokenExpired(token);
     }
 
-    /// Refresh Token
     public Date getRefreshTokenExpiration() {
         return new Date(System.currentTimeMillis() + refreshExpiration);
     }
