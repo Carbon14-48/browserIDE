@@ -32,19 +32,18 @@ interface AuthContextType {
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
+interface AuthProviderProps {
+  children: ReactNode;
+}
+export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const restoreSession = async () => {
       try {
-        // Try to refresh access token
         const refreshResponse = await api.post("/auth/refresh");
         setAccessToken(refreshResponse.data.accessToken);
-
-        // Get current user info
         const userResponse = await api.get("/auth/me");
         setUser(userResponse.data);
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -84,6 +83,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setUser(null);
     setAccessToken(null);
   };
+  function LoadingComponent() {
+    return (
+      <div className="min-h-screen bg-neutral-950 flex items-center justify-center">
+        <div className="text-white text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-500 mx-auto mb-4"></div>
+          <p>Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <AuthContext.Provider
@@ -96,20 +105,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         logout,
       }}
     >
-      {isLoading ? (
-        <div className="min-h-screen bg-neutral-950 flex items-center justify-center">
-          <div className="text-white text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-500 mx-auto mb-4"></div>
-            <p>Loading...</p>
-          </div>
-        </div>
-      ) : (
-        children
-      )}
+      {isLoading ? <LoadingComponent /> : children}
     </AuthContext.Provider>
   );
 };
 
+export default AuthContext;
 // eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => {
   const context = useContext(AuthContext);

@@ -37,25 +37,21 @@ export const authService = {
 
   login: async (data: LoginData): Promise<AuthResponse> => {
     const response = await api.post<AuthResponse>("/auth/login", data);
-
     setAccessToken(response.data.accessToken);
-
     return response.data;
   },
 
   logout: async (): Promise<void> => {
     await api.post("/auth/logout");
 
-    // Clear AT from memory
+    // remove AT from memory
     setAccessToken(null);
   },
 
   refreshToken: async (): Promise<string> => {
     const response = await api.post<{ accessToken: string }>("/auth/refresh");
-
     // Update AT in memory
     setAccessToken(response.data.accessToken);
-
     return response.data.accessToken;
   },
 };

@@ -10,9 +10,11 @@ const api = axios.create({
   withCredentials: true,
 });
 
-let accessToken: string | null = null;
+type nullishString = string | null;
 
-export const setAccessToken = (token: string | null) => {
+let accessToken: nullishString = null;
+
+export const setAccessToken = (token: nullishString) => {
   accessToken = token;
 };
 
@@ -20,7 +22,7 @@ export const getAccessToken = () => {
   return accessToken;
 };
 
-// Add AT to every request
+//Add AT to every request (the request intereceptors run before evry request is sent )
 api.interceptors.request.use(
   (config) => {
     if (accessToken) {
@@ -31,13 +33,13 @@ api.interceptors.request.use(
   (error) => Promise.reject(error),
 );
 
-//auto refresh
+//auto refresh(the rresponse ones runs after but before .then() or .catch())
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
     if (originalRequest.url?.includes("/auth/refresh")) {
-      return Promise.reject(error);
+      return Promise.reject(error); //escape loop of if refresh fail
     }
     if (
       (error.response?.status === 401 || error.response?.status === 403) &&
@@ -45,7 +47,6 @@ api.interceptors.response.use(
     ) {
       originalRequest._retry = true;
       try {
-        console.log(" Token expired, refreshing...");
         // Call refresh endpoint
         const response = await axios.post(
           `${API_BASE_URL}/auth/refresh`,

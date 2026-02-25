@@ -14,6 +14,7 @@ function UserMenu() {
     }
   };
 
+  //prevent from rerendering if there is no user
   if (!isAuthenticated || !user) {
     return null;
   }
