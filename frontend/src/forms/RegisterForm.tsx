@@ -57,6 +57,14 @@ function RegisterForm() {
     }
   };
 
+  const handleGitHubLogin = () => {
+    window.location.href = "http://localhost:8080/oauth2/authorization/github";
+  };
+
+  const handleGoogleLogin = () => {
+    alert("Google login coming soon!");
+  };
+
   return (
     <div
       className="w-90 bg-neutral-900/80 backdrop-blur-xl border border-white/10 
@@ -134,18 +142,22 @@ function RegisterForm() {
 
       <div className="flex flex-col gap-3">
         <button
+          onClick={handleGoogleLogin}
+          type="button"
           className="bg-neutral-800 cursor-pointer hover:bg-neutral-700 transition 
           border border-neutral-700 rounded-full py-2 flex items-center justify-around"
         >
-          <img className="w-5 h-5" src={googleIcon} />
+          <img className="w-5 h-5" src={googleIcon} alt="Google" />
           <p className="mr-12">Register with Google</p>
         </button>
 
         <button
+          onClick={handleGitHubLogin}
+          type="button"
           className="bg-neutral-800 cursor-pointer hover:bg-neutral-700 transition 
           border border-neutral-700 rounded-full py-2 flex justify-around items-center"
         >
-          <img className="w-5 h-5" src={githubIcon} />
+          <img className="w-5 h-5" src={githubIcon} alt="GitHub" />
           <p className="mr-12">Register with GitHub</p>
         </button>
       </div>
@@ -158,6 +170,7 @@ function RegisterForm() {
 
       <button
         onClick={() => navigate("/login")}
+        type="button"
         className="border cursor-pointer border-cyan-500 text-cyan-400 hover:bg-cyan-500 
           hover:text-black transition rounded-full py-2"
       >
