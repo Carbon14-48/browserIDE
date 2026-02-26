@@ -52,7 +52,7 @@ function LoginForm() {
   };
 
   const handleGoogleLogin = () => {
-    alert("Google login coming soon!");
+    window.location.href = "http://localhost:8080/oauth2/authorization/google";
   };
 
   return (

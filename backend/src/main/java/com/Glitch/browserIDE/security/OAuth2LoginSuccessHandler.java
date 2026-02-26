@@ -40,19 +40,35 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         String providerName = oauthToken.getAuthorizedClientRegistrationId();
 
         Map<String, Object> attributes = oauthUser.getAttributes();
-        String providerUserId = String.valueOf(attributes.get("id"));
-        String email = (String) attributes.get("email");
-        String username = (String) attributes.get("login");
-        String avatarUrl = (String) attributes.get("avatar_url");
-        String fullName = (String) attributes.get("name");
+
+        String providerUserId;
+        String email;
+        String username;
+        String avatarUrl;
+        String fullName;
+
+        if ("google".equals(providerName)) {
+            providerUserId = (String) attributes.get("sub");
+            email = (String) attributes.get("email");
+            fullName = (String) attributes.get("name");
+            avatarUrl = (String) attributes.get("picture");
+            username = email != null ? email.split("@")[0] : "user_" + providerUserId;
+        } else {
+            // github
+            providerUserId = String.valueOf(attributes.get("id"));
+            email = (String) attributes.get("email");
+            username = (String) attributes.get("login");
+            avatarUrl = (String) attributes.get("avatar_url");
+            fullName = (String) attributes.get("name");
+        }
 
         User user = findOrCreateUser(providerName, providerUserId, email, username, avatarUrl, fullName);
 
         String refreshToken = refreshTokenService.createRefreshToken(user).getToken();
 
         Cookie refreshCookie = new Cookie("refreshToken", refreshToken);
-        refreshCookie.setHttpOnly(true); // JS can't read it!
-        refreshCookie.setSecure(false); // Set to true in production
+        refreshCookie.setHttpOnly(true);
+        refreshCookie.setSecure(false); // true in prod
         refreshCookie.setPath("/");
         refreshCookie.setMaxAge(7 * 24 * 60 * 60); // 7 days
         response.addCookie(refreshCookie);
