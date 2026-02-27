@@ -5,7 +5,6 @@ import api from "../services/api";
 
 const OAuth2Callback = () => {
   const navigate = useNavigate();
-
   useEffect(() => {
     const completeOAuthLogin = async () => {
       try {
@@ -13,7 +12,7 @@ const OAuth2Callback = () => {
         setAccessToken(response.data.accessToken);
         navigate("/editor");
       } catch (error) {
-        console.error("OAuth callback error:", error);
+        console.log("OAuth callback error:", error);
         navigate("/login");
       }
     };

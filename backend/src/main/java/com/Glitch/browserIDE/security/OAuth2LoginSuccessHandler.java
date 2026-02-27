@@ -61,18 +61,16 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
             avatarUrl = (String) attributes.get("avatar_url");
             fullName = (String) attributes.get("name");
         }
-
         User user = findOrCreateUser(providerName, providerUserId, email, username, avatarUrl, fullName);
-
         String refreshToken = refreshTokenService.createRefreshToken(user).getToken();
-
         Cookie refreshCookie = new Cookie("refreshToken", refreshToken);
         refreshCookie.setHttpOnly(true);
-        refreshCookie.setSecure(false); // true in prod
+        refreshCookie.setSecure(false);
         refreshCookie.setPath("/");
-        refreshCookie.setMaxAge(7 * 24 * 60 * 60); // 7 days
+        refreshCookie.setMaxAge(7 * 24 * 60 * 60);
         response.addCookie(refreshCookie);
 
+        // Redirect to frontend
         getRedirectStrategy().sendRedirect(request, response, "http://localhost:5173/auth/callback");
     }
 
@@ -83,12 +81,12 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
             String username,
             String avatarUrl,
             String fullName) {
-        AuthProvider provider = AuthProvider.valueOf(providerName.toUpperCase());
 
+        AuthProvider provider = AuthProvider.valueOf(providerName.toUpperCase());
         Optional<UserOAuthAuth> existingOAuth = oauthRepository
                 .findByProviderAndProviderUserId(provider, providerUserId);
-
         if (existingOAuth.isPresent()) {
+            // User already logged in with this provider before
             return existingOAuth.get().getUser();
         }
 
@@ -103,7 +101,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
                     .email(email)
                     .fullName(fullName)
                     .avatarUrl(avatarUrl)
-                    .emailVerified(true)
+                    .emailVerified(true) // OAuth emails are verified
                     .enabled(true)
                     .build();
             user = userRepository.save(user);

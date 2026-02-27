@@ -4,7 +4,7 @@ export interface RegisterData {
   username: string;
   email: string;
   password: string;
-  fullName?: string;
+  fullname?: string;
 }
 
 export interface LoginData {
@@ -19,7 +19,7 @@ export interface AuthResponse {
     id: number;
     username: string;
     email: string;
-    fullName?: string;
+    fullname?: string;
     emailVerified: boolean;
     enabled: boolean;
   };

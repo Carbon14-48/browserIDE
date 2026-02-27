@@ -13,6 +13,10 @@ const schema = z
       .string()
       .min(3, "Username must be at least 3 characters")
       .max(50, "Username too long"),
+    fullname: z
+      .string()
+      .min(3, "please provide your full name")
+      .max(20, "fullName is long, provide first and last name only"),
     email: z.email("Please enter a valid email"),
     password: z
       .string()
@@ -47,7 +51,12 @@ function RegisterForm() {
     setError("");
 
     try {
-      await registerUser(data.username, data.email, data.password);
+      await registerUser(
+        data.username,
+        data.email,
+        data.password,
+        data.fullname,
+      );
       navigate("/editor");
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
@@ -86,6 +95,17 @@ function RegisterForm() {
         />
         {errors.username && (
           <p className="text-red-400 text-xs">{errors.username.message}</p>
+        )}
+        <label className="text-sm text-neutral-300">Full Name</label>
+
+        <input
+          {...register("fullname")}
+          type="text"
+          className="bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2 
+            focus:outline-none focus:ring-2 focus:ring-cyan-400"
+        />
+        {errors.fullname && (
+          <p className="text-red-400 text-xs">{errors.fullname.message}</p>
         )}
 
         <label className="text-sm text-neutral-300">Email</label>

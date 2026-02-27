@@ -67,13 +67,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     username: string,
     email: string,
     password: string,
-    fullName?: string,
+    fullname?: string,
   ) => {
     const response = await authService.register({
       username,
       email,
       password,
-      fullName,
+      fullname,
     });
     setUser(response.user);
   };
