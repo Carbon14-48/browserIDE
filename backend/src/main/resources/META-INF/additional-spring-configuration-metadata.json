@@ -14,6 +14,16 @@
       "name": "jwt.refresh.expiration",
       "type": "java.lang.String",
       "description": "expiration time of the jwt refresh token"
+    },
+    {
+      "name": "app.verification.token.expiration",
+      "type": "java.lang.String",
+      "description": "A description for 'app.verification.token.expiration'"
+    },
+    {
+      "name": "app.frontend.url",
+      "type": "java.lang.String",
+      "description": "A description for 'app.frontend.url'"
     }
   ]
 }

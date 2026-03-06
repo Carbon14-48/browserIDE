@@ -25,6 +25,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final RefreshTokenService refreshTokenService;
+    private final EmailVerificationService emailVerificationService;
 
     @Transactional
     public AuthResponseWithRefreshToken register(RegisterRequest request) {
@@ -55,7 +56,8 @@ public class AuthService {
 
         userLocalAuthRepository.save(localAuth);
 
-        // Generate tokens
+        emailVerificationService.createAndSendVerificationToken(savedUser);
+
         String accessToken = jwtService.generateAccessToken(savedUser.getId(), savedUser.getEmail());
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(savedUser);
 
@@ -83,7 +85,6 @@ public class AuthService {
             throw new BadCredentialsException("Account is disabled");
         }
 
-        // Generate tokens
         String accessToken = jwtService.generateAccessToken(user.getId(), user.getEmail());
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(user);
 
@@ -107,5 +108,4 @@ public class AuthService {
     public void logout(Long userId) {
         refreshTokenService.revokeUserTokens(userId);
     }
-
 }
