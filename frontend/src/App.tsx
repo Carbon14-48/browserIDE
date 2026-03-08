@@ -12,6 +12,7 @@ import RegisterForm from "./forms/RegisterForm";
 import CodeEditor from "./Components/CodeEditor";
 import OAuth2Callback from "./pages/OAuth2Callback";
 import { useAuth } from "./context/AuthContext";
+import VerifyEmail from "./pages/VerifyEmail";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading } = useAuth();
@@ -38,7 +39,11 @@ function App() {
           <Route path="login" element={<LoginForm />} />
           <Route path="register" element={<RegisterForm />} />
         </Route>
+
+        {/* MOVE THESE OUTSIDE Index! */}
+        <Route path="verify-email" element={<VerifyEmail />} />
         <Route path="auth/callback" element={<OAuth2Callback />} />
+
         <Route
           path="editor"
           element={

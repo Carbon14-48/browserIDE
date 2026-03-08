@@ -29,12 +29,15 @@ interface AuthContextType {
     fullName?: string,
   ) => Promise<void>;
   logout: () => Promise<void>;
+  refreshUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
 interface AuthProviderProps {
   children: ReactNode;
 }
+
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -48,7 +51,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         setUser(userResponse.data);
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (error) {
-        // No valid session - user stays null
         console.log("No session to restore");
       } finally {
         setIsLoading(false);
@@ -83,6 +85,18 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     setUser(null);
     setAccessToken(null);
   };
+
+  const refreshUser = async () => {
+    try {
+      console.log("Refreshing user data...");
+      const userResponse = await api.get("/auth/me");
+      setUser(userResponse.data);
+      console.log("user data refreshed:", userResponse.data);
+    } catch (error) {
+      console.error("Failed to refresh user:", error);
+    }
+  };
+
   function LoadingComponent() {
     return (
       <div className="min-h-screen bg-neutral-950 flex items-center justify-center">
@@ -103,6 +117,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         login,
         register,
         logout,
+        refreshUser,
       }}
     >
       {isLoading ? <LoadingComponent /> : children}
@@ -111,6 +126,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 };
 
 export default AuthContext;
+
 // eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => {
   const context = useContext(AuthContext);

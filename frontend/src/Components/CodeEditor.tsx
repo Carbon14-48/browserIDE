@@ -41,6 +41,18 @@ const CodeEditor: React.FC<MonacoEditorProps> = ({
     }
   };
 
+  const resendVerificationEmail = async () => {
+    if (!user?.email) return;
+
+    try {
+      await api.post(`/email/resend?email=${user.email}`);
+      setTestMessage("Verification email sent! Check your inbox.");
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (error) {
+      setTestMessage("Failed to send verification email");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-neutral-950 p-4">
       {/* User Menu Bar */}
@@ -76,6 +88,28 @@ const CodeEditor: React.FC<MonacoEditorProps> = ({
               {testMessage}
             </p>
           )}
+        </div>
+      )}
+
+      {/* Email Verification Banner - ADD THIS! */}
+      {isAuthenticated && user && !user.emailVerified && (
+        <div className="bg-yellow-500/20 border border-yellow-500 rounded-lg p-4 mb-4">
+          <div className="flex items-center justify-between">
+            <div className="text-yellow-400">
+              <p className="font-semibold flex items-center gap-2">
+                ⚠️ Email Not Verified
+              </p>
+              <p className="text-sm mt-1">
+                Please check your inbox and verify your email address.
+              </p>
+            </div>
+            <button
+              onClick={resendVerificationEmail}
+              className="bg-yellow-500 hover:bg-yellow-400 transition text-black px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap"
+            >
+              Resend Email
+            </button>
+          </div>
         </div>
       )}
 
